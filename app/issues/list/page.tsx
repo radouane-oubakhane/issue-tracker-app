@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import NextLink from 'next/link';
+import NextLink from "next/link";
 import { Table } from "@radix-ui/themes";
 import { IssueStatusBadge, Link } from "@/app/components";
 import IssueActions from "./IssueActions";
@@ -7,7 +7,7 @@ import { Issue, Status } from "@prisma/client";
 import { ArrowUpIcon, TriangleUpIcon } from "@radix-ui/react-icons";
 
 interface Props {
-  searchParams: { status: Status, orderBy: keyof Issue };
+  searchParams: { status: Status; orderBy: keyof Issue };
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
@@ -21,10 +21,17 @@ const IssuesPage = async ({ searchParams }: Props) => {
     ? searchParams.status
     : undefined;
 
+  const orderBy = columns
+    .map((column) => column.value)
+    .includes(searchParams.orderBy)
+    ? { [searchParams.orderBy]: "asc" }
+    : undefined;
+
   const issues = await prisma.issue.findMany({
     where: {
       status,
     },
+    orderBy
   });
   return (
     <div>
@@ -37,12 +44,16 @@ const IssuesPage = async ({ searchParams }: Props) => {
                 key={column.value}
                 className={column.className}
               >
-                <NextLink href={{
-                  query: { ...searchParams, orderBy: column.value },
-            }}>{column.label}</NextLink>
-            {
-              column.value === searchParams.orderBy && <TriangleUpIcon className='inline' />
-            }
+                <NextLink
+                  href={{
+                    query: { ...searchParams, orderBy: column.value },
+                  }}
+                >
+                  {column.label}
+                </NextLink>
+                {column.value === searchParams.orderBy && (
+                  <TriangleUpIcon className="inline" />
+                )}
               </Table.ColumnHeaderCell>
             ))}
           </Table.Row>
