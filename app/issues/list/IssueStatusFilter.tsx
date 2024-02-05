@@ -13,7 +13,9 @@ const statuses: { label: string; value?: Status }[] = [
 const IssueStatusFilter = () => {
   const router = useRouter();
   return (
-    <Select.Root onValueChange={(status) => {
+    <Select.Root 
+    defaultValue=""
+    onValueChange={(status) => {
       const query = status ? `?status=${status}` : '';
       router.push('/issues/list' + query);
     }}>
