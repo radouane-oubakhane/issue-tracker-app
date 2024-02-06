@@ -3,6 +3,7 @@ import IssueChart from "./IssueChart";
 import IssueSummary from "./IssueSummary";
 import prisma from "@/prisma/client";
 import LatestIssue from "./LatestIssue";
+import { Metadata } from "next";
 
 export default async function Home() {
   const open = await prisma.issue.count({
@@ -15,13 +16,20 @@ export default async function Home() {
     where: { status: "CLOSED" },
   });
 
-  const data = {open, inProgress, closed};
+  const data = { open, inProgress, closed };
 
-  return <Grid columns={{initial: "1", md: "2"}} gap="5">
-    <Flex direction="column" gap="5">
-      <IssueSummary {...data} />
-      <IssueChart {...data} />
-    </Flex>
-    <LatestIssue />
-  </Grid>
+  return (
+    <Grid columns={{ initial: "1", md: "2" }} gap="5">
+      <Flex direction="column" gap="5">
+        <IssueSummary {...data} />
+        <IssueChart {...data} />
+      </Flex>
+      <LatestIssue />
+    </Grid>
+  );
 }
+
+export const metadata: Metadata = {
+  title: "Issue Tracker - Dashboard",
+  description: "View a summary of all issues in the system",
+};
